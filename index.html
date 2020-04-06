@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My World Clock</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="index.css"
+        />
+    </head>
+  
+    <body>
+        <div id="clockContainer">
+            <div id="clock">
+                <p>Clock 1</p>
+                <p class="date">{{ date }}</p>
+                <p class="time">{{ time }}</p>
+                <p class="text">Local Time with Vue.js</p>
+            </div>
+            <div id="clock">
+                <p class="date">{{ date }}</p>
+                <p class="time">{{ time }}</p>
+                <p class="text">Local Time with Vue.js</p>
+            </div>
+            <div id="clock">
+                <p class="date">{{ date }}</p>
+                <p class="time">{{ time }}</p>
+                <p class="text">Local Time with Vue.js</p>
+            </div>
+            <div id="clock">
+                <p class="date">{{ date }}</p>
+                <p class="time">{{ time }}</p>
+                <p class="text">Local Time with Vue.js</p>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    var clock = new Vue({
+    el: '#clock',
+    data: {
+        time: '',
+        date: ''
+    }
+});
+
+var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+var timerID = setInterval(updateTime, 1000);
+updateTime();
+function updateTime() {
+    var cd = new Date();
+    clock.time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
+    clock.date = zeroPadding(cd.getFullYear(), 4) + '-' + zeroPadding(cd.getMonth()+1, 2) + '-' + zeroPadding(cd.getDate(), 2) + ' ' + week[cd.getDay()];
+};
+
+function zeroPadding(num, digit) {
+    var zero = '';
+    for(var i = 0; i < digit; i++) {
+        zero += '0';
+    }
+    return (zero + num).slice(-digit);
+}
+</script>
