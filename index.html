@@ -12,43 +12,44 @@
   
     <body>
         <div id="clockContainer">
-            <div id="clock">
-                <p>Clock 1</p>
+            <div class="clock">
                 <p class="date">{{ date }}</p>
                 <p class="time">{{ time }}</p>
-                <p class="text">Local Time with Vue.js</p>
+                <p class="text">Local Time</p>
             </div>
-            <div id="clock">
-                <p class="date">{{ date }}</p>
-                <p class="time">{{ time }}</p>
-                <p class="text">Local Time with Vue.js</p>
-            </div>
-            <div id="clock">
-                <p class="date">{{ date }}</p>
-                <p class="time">{{ time }}</p>
-                <p class="text">Local Time with Vue.js</p>
-            </div>
-            <div id="clock">
-                <p class="date">{{ date }}</p>
-                <p class="time">{{ time }}</p>
-                <p class="text">Local Time with Vue.js</p>
-            </div>
+            <world-clock
+                v-for = "item in citylist"
+                v-bind:key = "item.id"
+                v-bind:todo = "item"
+            ></world-clock>
         </div>
     </body>
 </html>
 
 <script>
-    var clock = new Vue({
-    el: '#clock',
+
+// Define a clock component
+Vue.component('world-clock', {
+    props: ['todo'],
+    template: '<div class="clock"><p class="date">{{ todo.date }}</p><p class="time">{{ todo.time }}</p><p class="text">{{ todo.name }}</p></div>'
+})
+
+var clock = new Vue({
+    el: '#clockContainer',
     data: {
         time: '',
-        date: ''
+        date: '',
+        citylist: [
+            {id: 1, time:'10:30:45', date:'2020-04-08 WED', name: 'London'},
+            {id: 2, time:'12:30:45', date:'2020-04-08 WED', name: 'Paris'},
+        ]
     }
 });
 
 var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 var timerID = setInterval(updateTime, 1000);
 updateTime();
+
 function updateTime() {
     var cd = new Date();
     clock.time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
