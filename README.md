@@ -1,4 +1,4 @@
-# myClock v0.2
+# myClock v0.3
 A personal project to help productivity
 
 ## Action Items 
@@ -6,3 +6,4 @@ A personal project to help productivity
 2. Automatically check UTC offset from worldtimeapi.com
 
 ## Change Log
+* 0.2 -> 0.3 added settings, with add/remove function. localstorage persistence added.
