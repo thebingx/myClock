@@ -8,6 +8,37 @@
             type="text/css"
             href="index.css"
         />
+        <script type="text/x-template" id="modal-template">
+            <transition name="modal">
+              <div class="modal-mask">
+                <div class="modal-wrapper">
+                  <div class="modal-container">
+      
+                    <div class="modal-header">
+                      <slot name="header">
+                        Settings
+                      </slot>
+                    </div>
+      
+                    <div class="modal-body">
+                      <slot name="body">
+                        Here are some modals
+                      </slot>
+                    </div>
+      
+                    <div class="modal-footer">
+                      <slot name="footer">
+                        When you are done, click OK.
+                        <button class="modal-default-button" @click="$emit('close')">
+                          OK
+                        </button>
+                      </slot>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </script>
     </head>
   
     <body>
@@ -17,11 +48,54 @@
                 v-bind:key = "item.id"
                 v-bind:todo = "item"
             ></world-clock>
+            <div>
+                <button id="show-modal" @click="showModal = true">Settings</button>
+                <!-- use the modal component, pass in the prop -->
+                <modal v-if="showModal" @close="showModal = false">
+                  <div slot="body">Clock Settings Here:
+                      <blog-post
+                        v-for = "post in citylist"
+                        v-bind:key = "post.id"
+                        v-bind:post = "post"
+                      ></blog-post>
+                      <div>
+                          <div style="width:50%; display:inline-block;">
+                            <input
+                              placeholder="add Clock"
+                              v-model="newClock"
+                              @keyup.enter="addClock"
+                            >
+                          </div>
+                          <div style="width:20%; display:inline-block;">
+                            <input>
+                          </div>
+                      </div>
+                  </div>
+                  <h3 slot="header">Settings</h3>
+                </modal>
+            </div>
         </div>
     </body>
 </html>
 
 <script>
+
+// localStorage persistence
+var STORAGE_KEY = "myclock-0.3";
+var myclockStorage = {
+  fetch: function() {
+    var myclocks = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    myclocks.forEach(function(myclock, index) {
+      myclock.id = index;
+    });
+    myclockStorage.uid = myclocks.length;
+    return myclocks;
+  },
+  save: function(myclocks) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(myclocks));
+  }
+};
+
 
 // Define a clock component
 Vue.component('world-clock', {
@@ -29,17 +103,57 @@ Vue.component('world-clock', {
     template: '<div class="clock"><p class="date">{{ todo.date }}</p><p class="time">{{ todo.time }}</p><p class="text">{{ todo.name }}</p></div>'
 })
 
+// register modal component
+Vue.component("modal", {
+    template: "#modal-template"
+});
+
+Vue.component('blog-post', {
+    props: ['post'], //['id', 'name', 'zone'],
+    template: '<div><div style="width:50%; display:inline-block;"><input v-model="post.name"></div><div style="width:20%; display:inline-block;"><input v-model="post.zone"></div><button class="destroy" @click="removeClock(todo)">Delete</button></div>'
+})
+
 var clock = new Vue({
     el: '#clockContainer',
+    
     data: {
         time: '',
         date: '',
-        citylist: [
-            {id: 0, time:'10:30:45', date:'2020-04-08 WED', name: 'Local Time', zone: 8 },
-            {id: 1, time:'10:30:45', date:'2020-04-08 WED', name: 'London', zone: 0 },
-            {id: 2, time:'12:30:45', date:'2020-04-08 WED', name: 'Seattle', zone: -7},
-            {id: 3, time:'14:30:45', date:'2020-04-09 THU', name: 'Melbourne', zone: 10}
-        ]
+        newClock: '',
+        showModal: false,
+        citylist: myclockStorage.fetch()
+        //[
+        //    {id: 0, time:'10:30:45', date:'2020-04-08 WED', name: 'Local Time', zone: 8 },
+        //    {id: 1, time:'10:30:45', date:'2020-04-08 WED', name: 'London', zone: 0 },
+        //    {id: 2, time:'12:30:45', date:'2020-04-08 WED', name: 'Seattle', zone: -7},
+        //    {id: 3, time:'14:30:45', date:'2020-04-09 THU', name: 'Melbourne', zone: 10}
+        //]
+    },
+    
+    watch: {
+        citylist: {
+            handler: function(citylist) {
+                myclockStorage.save(citylist);
+            },
+        }
+    },
+
+    methods: {
+        addClock: function() {
+            this.citylist.push ({
+                id: this.citylist.length + 1,
+                name: this.newClock,
+                zone: 0
+            })
+            this.newClock = '';
+            var timerID = setInterval(updateTime, 1000);
+            updateTime();
+        },
+
+        removeClock: function(currentclock) {
+            alert(currentclock);
+            this.citylist.splice(this.citylist.indexOf(currentclock), 1);
+        }
     }
 });
 
@@ -47,6 +161,7 @@ var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 var timerID = setInterval(updateTime, 1000);
 updateTime();
 
+//myclockStorage.save(clock.citylist);
 
 
 function updateTime() {
