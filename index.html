@@ -12,11 +12,6 @@
   
     <body>
         <div id="clockContainer">
-            <div class="clock">
-                <p class="date">{{ date }}</p>
-                <p class="time">{{ time }}</p>
-                <p class="text">Local Time</p>
-            </div>
             <world-clock
                 v-for = "item in citylist"
                 v-bind:key = "item.id"
@@ -40,8 +35,10 @@ var clock = new Vue({
         time: '',
         date: '',
         citylist: [
-            {id: 1, time:'10:30:45', date:'2020-04-08 WED', name: 'London'},
-            {id: 2, time:'12:30:45', date:'2020-04-08 WED', name: 'Paris'},
+            {id: 0, time:'10:30:45', date:'2020-04-08 WED', name: 'Local Time', zone: 8 },
+            {id: 1, time:'10:30:45', date:'2020-04-08 WED', name: 'London', zone: 0 },
+            {id: 2, time:'12:30:45', date:'2020-04-08 WED', name: 'Seattle', zone: -7},
+            {id: 3, time:'14:30:45', date:'2020-04-09 THU', name: 'Melbourne', zone: 10}
         ]
     }
 });
@@ -50,10 +47,15 @@ var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 var timerID = setInterval(updateTime, 1000);
 updateTime();
 
+
+
 function updateTime() {
-    var cd = new Date();
-    clock.time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
-    clock.date = zeroPadding(cd.getFullYear(), 4) + '-' + zeroPadding(cd.getMonth()+1, 2) + '-' + zeroPadding(cd.getDate(), 2) + ' ' + week[cd.getDay()];
+    for (i in clock.citylist) {
+        offset = clock.citylist[i].zone;
+        cd = calcTime(offset)
+        clock.citylist[i].time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
+        clock.citylist[i].date = zeroPadding(cd.getFullYear(), 4) + '-' + zeroPadding(cd.getMonth()+1, 2) + '-' + zeroPadding(cd.getDate(), 2) + ' ' + week[cd.getDay()];
+    }
 };
 
 function zeroPadding(num, digit) {
@@ -63,4 +65,21 @@ function zeroPadding(num, digit) {
     }
     return (zero + num).slice(-digit);
 }
+
+function calcTime(offset) {
+    //create Date object for current location
+    var d = new Date();
+
+    //conver to msec
+    //subtract local time zone offset
+    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+
+    //create new Date object for different city
+    //using suppied offset
+    var nd = new Date(utc + (3600000 * offset));
+
+    //return time as a string
+    return nd
+}
+
 </script>
