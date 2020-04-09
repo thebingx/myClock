@@ -64,11 +64,13 @@
                               placeholder="add Clock"
                               v-model="newClock"
                               @keyup.enter="addClock"
-                              @tofather="removeClock"
                             >
                           </div>
                           <div style="width:20%; display:inline-block;">
-                            <input>
+                            <input
+                              placeholder="8"
+                              V-model="newZone"
+                            >
                           </div>
                       </div>
                   </div>
@@ -126,6 +128,7 @@ var clock = new Vue({
         time: '',
         date: '',
         newClock: '',
+        newZone: '',
         showModal: false,
         citylist: myclockStorage.fetch()
     },
@@ -143,10 +146,9 @@ var clock = new Vue({
             this.citylist.push ({
                 id: this.citylist.length + 1,
                 name: this.newClock,
-                zone: 0
+                zone: this.newZone,
             })
             this.newClock = '';
-            var timerID = setInterval(updateTime, 1000);
             updateTime();
         },
 
@@ -166,7 +168,7 @@ var clock = new Vue({
 
 var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 var timerID = setInterval(updateTime, 1000);
-updateTime();
+//setInterval(updateTime, 1000);
 
 function updateTime() {
     for (i in clock.citylist) {
