@@ -51,7 +51,7 @@
             <div>
                 <button id="show-modal" @click="showModal = true">Settings</button>
                 <!-- use the modal component, pass in the prop -->
-                <modal v-if="showModal" @close="showModal = false">
+                <modal v-if="showModal" @close="saveSettings">
                   <div slot="body">Clock Settings Here:
                       <blog-post
                         v-for = "post in citylist"
@@ -64,6 +64,7 @@
                               placeholder="add Clock"
                               v-model="newClock"
                               @keyup.enter="addClock"
+                              @tofather="removeClock"
                             >
                           </div>
                           <div style="width:20%; display:inline-block;">
@@ -100,7 +101,7 @@ var myclockStorage = {
 // Define a clock component
 Vue.component('world-clock', {
     props: ['todo'],
-    template: '<div class="clock"><p class="date">{{ todo.date }}</p><p class="time">{{ todo.time }}</p><p class="text">{{ todo.name }}</p></div>'
+    template: '<div class="clock"><p class="date">{{ todo.date }}</p><p class="time">{{ todo.time }}</p><p class="text">{{ todo.name }}</p></div></div>'
 })
 
 // register modal component
@@ -110,7 +111,12 @@ Vue.component("modal", {
 
 Vue.component('blog-post', {
     props: ['post'], //['id', 'name', 'zone'],
-    template: '<div><div style="width:50%; display:inline-block;"><input v-model="post.name"></div><div style="width:20%; display:inline-block;"><input v-model="post.zone"></div><button class="destroy" @click="removeClock(todo)">Delete</button></div>'
+    template: '<div><div style="width:50%; display:inline-block;"><input v-model="post.name"></div><div style="width:20%; display:inline-block;"><input v-model="post.zone"></div><button class="destroy" @click="handleClick(post)">Delete</button></div>',
+    methods: {
+      handleClick: function(id) {
+        clock.citylist.splice(clock.citylist.indexOf(id), 1);
+      }
+    }
 })
 
 var clock = new Vue({
@@ -122,12 +128,6 @@ var clock = new Vue({
         newClock: '',
         showModal: false,
         citylist: myclockStorage.fetch()
-        //[
-        //    {id: 0, time:'10:30:45', date:'2020-04-08 WED', name: 'Local Time', zone: 8 },
-        //    {id: 1, time:'10:30:45', date:'2020-04-08 WED', name: 'London', zone: 0 },
-        //    {id: 2, time:'12:30:45', date:'2020-04-08 WED', name: 'Seattle', zone: -7},
-        //    {id: 3, time:'14:30:45', date:'2020-04-09 THU', name: 'Melbourne', zone: 10}
-        //]
     },
     
     watch: {
@@ -151,8 +151,15 @@ var clock = new Vue({
         },
 
         removeClock: function(currentclock) {
-            alert(currentclock);
-            this.citylist.splice(this.citylist.indexOf(currentclock), 1);
+            // this function doesn't work yet, need to fit!
+            //alert(currentclock);
+            //this.citylist.splice(this.citylist.indexOf(currentclock), 1);
+            console.log('received!');
+        },
+
+        saveSettings: function() {
+          this.showModal = false;
+          myclockStorage.save(this.citylist);
         }
     }
 });
@@ -160,9 +167,6 @@ var clock = new Vue({
 var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 var timerID = setInterval(updateTime, 1000);
 updateTime();
-
-//myclockStorage.save(clock.citylist);
-
 
 function updateTime() {
     for (i in clock.citylist) {
