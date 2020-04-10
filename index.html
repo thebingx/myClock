@@ -49,7 +49,9 @@
                 v-bind:todo = "item"
             ></world-clock>
             <div>
-                <button id="show-modal" @click="showModal = true">Settings</button>
+                <button id="show-modal" @click="showModal = true" class="settings_button">
+                  <img src="settings.svg" />
+                </button>
                 <!-- use the modal component, pass in the prop -->
                 <modal v-if="showModal" @close="saveSettings">
                   <div slot="body">Clock Settings Here:
