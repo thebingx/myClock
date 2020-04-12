@@ -130,3 +130,12 @@ p {
 .settings_button:hover {
   opacity: 1;
 }
+
+.settingName {
+  width: 80px;
+
+}
+
+.settingZone {
+  width: 30px;
+}

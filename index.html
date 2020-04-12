@@ -61,19 +61,46 @@
                         v-bind:post = "post"
                       ></blog-post>
                       <div>
-                          <div style="width:50%; display:inline-block;">
+                          <span>
+                            Name: 
                             <input
                               placeholder="add Clock"
                               v-model="newClock"
-                              @keyup.enter="addClock"
+                              class="settingName"
                             >
-                          </div>
-                          <div style="width:20%; display:inline-block;">
+                          </span>
+                          <span>
+                            UTC Offset: 
                             <input
                               placeholder="8"
                               V-model="newZone"
+                              class="settingZone"
                             >
-                          </div>
+                          </span>
+                          <span>
+                            <button
+                              class="destroy"
+                              @click="addClock"
+                            >+
+                            </button>
+                          </span>
+                      </div>
+                      <div>
+                        <span>
+                          <label>Name: </label>
+                          <select class="settingName">
+                            <option value="beijing">Beijing</option>
+                            <option value="seattle">Seattle</option>
+                            <option value="newyork">New York</option>
+                          </select>
+                        </span>
+                        <span>
+                          <button
+                          class="destroy"
+                          @click="addClock2"
+                          >+
+                        </button>
+                        </span>
                       </div>
                   </div>
                   <h3 slot="header">Settings</h3>
@@ -115,7 +142,7 @@ Vue.component("modal", {
 
 Vue.component('blog-post', {
     props: ['post'], //['id', 'name', 'zone'],
-    template: '<div><div style="width:50%; display:inline-block;"><input v-model="post.name"></div><div style="width:20%; display:inline-block;"><input v-model="post.zone"></div><button class="destroy" @click="handleClick(post)">Delete</button></div>',
+    template: '<div><span>Name: <input v-model="post.name" class="settingName"></span><span> UTC Offset: <input class="settingZone" v-model="post.zone"></span><span> <button class="destroy" @click="handleClick(post)">X</button></span></div>',
     methods: {
       handleClick: function(id) {
         clock.citylist.splice(clock.citylist.indexOf(id), 1);
@@ -152,6 +179,10 @@ var clock = new Vue({
             })
             this.newClock = '';
             updateTime();
+        },
+
+        addClock2: function() {
+            alert('called addClock2');
         },
 
         removeClock: function(currentclock) {
