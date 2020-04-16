@@ -3,6 +3,8 @@
     <head>
         <title>My World Clock</title>
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="moment.js"></script>
+        <script src="moment-timezone-with-data.js"></script>
         <link
             rel="stylesheet"
             type="text/css"
@@ -55,11 +57,11 @@
                 <!-- use the modal component, pass in the prop -->
                 <modal v-if="showModal" @close="saveSettings">
                   <div slot="body">Clock Settings Here:
-                      <blog-post
+                      <clock-items
                         v-for = "post in citylist"
                         v-bind:key = "post.id"
                         v-bind:post = "post"
-                      ></blog-post>
+                      ></clock-items>
                       <div>
                           <span>
                             Name: 
@@ -88,10 +90,10 @@
                       <div>
                         <span>
                           <label>Name: </label>
-                          <select class="settingName">
-                            <option value="beijing">Beijing</option>
-                            <option value="seattle">Seattle</option>
-                            <option value="newyork">New York</option>
+                          <select class="settingName" id="timezone">
+                            <option v-for="tz in tzlist" :key="tz.value" :value="tz.value">
+                              {{ tz.name }}
+                            </option>
                           </select>
                         </span>
                         <span>
@@ -140,7 +142,7 @@ Vue.component("modal", {
     template: "#modal-template"
 });
 
-Vue.component('blog-post', {
+Vue.component('clock-items', {
     props: ['post'], //['id', 'name', 'zone'],
     template: '<div><span>Name: <input v-model="post.name" class="settingName"></span><span> UTC Offset: <input class="settingZone" v-model="post.zone"></span><span> <button class="destroy" @click="handleClick(post)">X</button></span></div>',
     methods: {
@@ -149,6 +151,12 @@ Vue.component('blog-post', {
       }
     }
 })
+
+// Vue.component('timezones'), {
+//   props: ['tz'],
+//   template: '<option value="{{ tz.value }}">{{ tz.name }}</option>'
+// }
+
 
 var clock = new Vue({
     el: '#clockContainer',
@@ -159,7 +167,11 @@ var clock = new Vue({
         newClock: '',
         newZone: '',
         showModal: false,
-        citylist: myclockStorage.fetch()
+        citylist: myclockStorage.fetch(),
+        tzlist: [
+          {value: 'sh', name: 'Shanghai'},
+          {value: 'ny', name: 'New York'}
+        ]
     },
     
     watch: {
@@ -182,7 +194,8 @@ var clock = new Vue({
         },
 
         addClock2: function() {
-            alert('called addClock2');
+
+            alert('called');
         },
 
         removeClock: function(currentclock) {
@@ -198,6 +211,19 @@ var clock = new Vue({
         }
     }
 });
+
+let tz = moment.tz.names()
+
+// let optionList = document.getElementById('timezone').options;
+
+console.log(tz)
+
+// tz.forEach( option =>
+//     optionList.add(
+//         new Option(option)
+//     )
+// )
+
 
 var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 var timerID = setInterval(updateTime, 1000);
