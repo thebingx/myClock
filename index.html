@@ -4,7 +4,7 @@
         <title>My World Clock</title>
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script src="moment.js"></script>
-        <script src="moment-timezone-with-data.js"></script>
+        <script src="moment-timezone-with-data-10-year-range.js"></script>
         <link
             rel="stylesheet"
             type="text/css"
@@ -63,33 +63,8 @@
                         v-bind:post = "post"
                       ></clock-items>
                       <div>
-                          <span>
-                            Name: 
-                            <input
-                              placeholder="add Clock"
-                              v-model="newClock"
-                              class="settingName"
-                            >
-                          </span>
-                          <span>
-                            UTC Offset: 
-                            <input
-                              placeholder="8"
-                              V-model="newZone"
-                              class="settingZone"
-                            >
-                          </span>
-                          <span>
-                            <button
-                              class="destroy"
-                              @click="addClock"
-                            >+
-                            </button>
-                          </span>
-                      </div>
-                      <div>
                         <span>
-                          <label>Name: </label>
+                          <label>Add Clock: </label>
                           <select class="settingName" id="timezone">
                             <option v-for="tz in tzlist" :key="tz.value" :value="tz.value">
                               {{ tz.name }}
@@ -99,7 +74,7 @@
                         <span>
                           <button
                           class="destroy"
-                          @click="addClock2"
+                          @click="addClock"
                           >+
                         </button>
                         </span>
@@ -113,12 +88,12 @@
 </html>
 
 <script>
-
 // localStorage persistence
-var STORAGE_KEY = "myclock-0.3";
-var myclockStorage = {
+let STORAGE_KEY = "myclock-0.3";
+
+let myclockStorage = {
   fetch: function() {
-    var myclocks = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    let myclocks = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     myclocks.forEach(function(myclock, index) {
       myclock.id = index;
     });
@@ -143,35 +118,26 @@ Vue.component("modal", {
 });
 
 Vue.component('clock-items', {
-    props: ['post'], //['id', 'name', 'zone'],
-    template: '<div><span>Name: <input v-model="post.name" class="settingName"></span><span> UTC Offset: <input class="settingZone" v-model="post.zone"></span><span> <button class="destroy" @click="handleClick(post)">X</button></span></div>',
+    props: ['post'], 
+    template: '<div><span>Name: <input v-model="post.name" class="settingName"></span><span><span><button class="destroy" @click="removeClock(post)">X</button></span></div>',
     methods: {
-      handleClick: function(id) {
+      removeClock: function(id) {
         clock.citylist.splice(clock.citylist.indexOf(id), 1);
       }
     }
 })
 
-// Vue.component('timezones'), {
-//   props: ['tz'],
-//   template: '<option value="{{ tz.value }}">{{ tz.name }}</option>'
-// }
 
-
-var clock = new Vue({
+let clock = new Vue({
     el: '#clockContainer',
     
     data: {
         time: '',
         date: '',
         newClock: '',
-        newZone: '',
         showModal: false,
         citylist: myclockStorage.fetch(),
-        tzlist: [
-          {value: 'sh', name: 'Shanghai'},
-          {value: 'ny', name: 'New York'}
-        ]
+        tzlist: getTzlist()
     },
     
     watch: {
@@ -184,25 +150,12 @@ var clock = new Vue({
 
     methods: {
         addClock: function() {
+            cityname = document.getElementById('timezone').value;
             this.citylist.push ({
-                id: this.citylist.length + 1,
-                name: this.newClock,
-                zone: this.newZone,
+              id: this.citylist.length + 1,
+              name: cityname,
             })
-            this.newClock = '';
             updateTime();
-        },
-
-        addClock2: function() {
-
-            alert('called');
-        },
-
-        removeClock: function(currentclock) {
-            // this function doesn't work yet, need to fit!
-            //alert(currentclock);
-            //this.citylist.splice(this.citylist.indexOf(currentclock), 1);
-            console.log('received!');
         },
 
         saveSettings: function() {
@@ -212,54 +165,30 @@ var clock = new Vue({
     }
 });
 
-let tz = moment.tz.names()
-
-// let optionList = document.getElementById('timezone').options;
-
-console.log(tz)
-
-// tz.forEach( option =>
-//     optionList.add(
-//         new Option(option)
-//     )
-// )
-
 
 var week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 var timerID = setInterval(updateTime, 1000);
 //setInterval(updateTime, 1000);
 
+
+function getTzlist() {
+          let list = [];
+          let tz = moment.tz.names()
+          tz.forEach( item => list.push({ value: item, name: item}))
+          return list;
+}
+
 function updateTime() {
     for (i in clock.citylist) {
-        offset = clock.citylist[i].zone;
-        cd = calcTime(offset)
-        clock.citylist[i].time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
-        clock.citylist[i].date = zeroPadding(cd.getFullYear(), 4) + '-' + zeroPadding(cd.getMonth()+1, 2) + '-' + zeroPadding(cd.getDate(), 2) + ' ' + week[cd.getDay()];
+        zone = clock.citylist[i].name;
+
+        let cd = new Date();
+        time = moment.tz(cd, zone).format('HH:mm:ss');
+        date = moment.tz(cd, zone).format('YYYY-MM-DD') + ' ' + week[moment.tz(cd, zone).day()];
+
+        clock.citylist[i].time = time;
+        clock.citylist[i].date = date;
     }
 };
-
-function zeroPadding(num, digit) {
-    var zero = '';
-    for(var i = 0; i < digit; i++) {
-        zero += '0';
-    }
-    return (zero + num).slice(-digit);
-}
-
-function calcTime(offset) {
-    //create Date object for current location
-    var d = new Date();
-
-    //conver to msec
-    //subtract local time zone offset
-    var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
-
-    //create new Date object for different city
-    //using suppied offset
-    var nd = new Date(utc + (3600000 * offset));
-
-    //return time as a string
-    return nd
-}
 
 </script>
