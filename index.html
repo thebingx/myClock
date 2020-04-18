@@ -144,7 +144,7 @@
     
     template:`
       <div>
-        <span>Clock: {{ post.name }} </span>
+        <span>{{ post.name }} </span>
         <span><button class="destroy" @click="upClock(post)">Up</button></span>
         <span><button class="destroy" @click="downClock(post)">Down</button></span>
       </div>'`,
@@ -154,8 +154,8 @@
         let i = clock.citylist.indexOf(id);
 
         if (i > 0) {
-          //code to move the clock up
-          console.log(i);
+          clock.citylist.splice(i-1, 0, clock.citylist.splice(i,1)[0])
+          console.log(clock.citylist[i]);
         } else { console.log ('can not move up')}
 
       },
@@ -166,7 +166,7 @@
         if (i == clock.citylist.length - 1) {
           console.log('can not move down');
         } else { 
-          // code to move the clock down
+          clock.citylist.splice(i+1, 0, clock.citylist.splice(i,1)[0])
           console.log(i);
         }
       }

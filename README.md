@@ -1,4 +1,4 @@
-# myClock v0.6
+# myClock v0.6.1
 A personal project to help productivity
 
 ## Action Items 
