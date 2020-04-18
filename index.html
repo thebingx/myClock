@@ -57,7 +57,6 @@
         <!-- use the modal component, pass in the prop -->
         <modal v-if="showModal" @close="saveSettings">
           <div slot="body">
-            Clock Settings Here:
             <clock-items
               v-for="post in citylist"
               v-bind:key="post.id"
@@ -85,8 +84,16 @@
         </modal>
       </div>
       <div id="slidebar">
-        <input v-model="driftrange" type="range" min="-24" max="24" value="0" class="slider" id="myRange" @mouseup="resetslider">
-        <!-- <p class="slidervalue">Value is {{ driftrange }}</p> -->
+        <input
+          v-model="driftrange"
+          type="range"
+          min="-24"
+          max="24"
+          value="0"
+          class="slider"
+          id="myRange"
+          @mouseup="resetslider"
+        />
       </div>
     </div>
   </body>
@@ -113,7 +120,7 @@
   // Define a clock component
   Vue.component("world-clock", {
     props: ["todo"],
-    
+
     template: `
       <div class="clock">
         <p class="date">
@@ -126,12 +133,12 @@
         <p class="text">{{ todo.name }}</p>
         
       </div>`,
-    
+
     methods: {
       killClock: function (id) {
-        clock.citylist.splice(clock.citylist.indexOf(id),1);
-      }
-    }
+        clock.citylist.splice(clock.citylist.indexOf(id), 1);
+      },
+    },
   });
 
   // register modal component
@@ -141,35 +148,36 @@
 
   Vue.component("clock-items", {
     props: ["post"],
-    
-    template:`
+
+    template: `
       <div>
         <span>{{ post.name }} </span>
         <span><button class="destroy" @click="upClock(post)">Up</button></span>
         <span><button class="destroy" @click="downClock(post)">Down</button></span>
-      </div>'`,
-    
+      </div>`,
+
     methods: {
       upClock: function (id) {
         let i = clock.citylist.indexOf(id);
 
         if (i > 0) {
-          clock.citylist.splice(i-1, 0, clock.citylist.splice(i,1)[0])
+          clock.citylist.splice(i - 1, 0, clock.citylist.splice(i, 1)[0]);
           console.log(clock.citylist[i]);
-        } else { console.log ('can not move up')}
-
+        } else {
+          console.log("can not move up");
+        }
       },
 
       downClock: function (id) {
         let i = clock.citylist.indexOf(id);
-      
+
         if (i == clock.citylist.length - 1) {
-          console.log('can not move down');
-        } else { 
-          clock.citylist.splice(i+1, 0, clock.citylist.splice(i,1)[0])
+          console.log("can not move down");
+        } else {
+          clock.citylist.splice(i + 1, 0, clock.citylist.splice(i, 1)[0]);
           console.log(i);
         }
-      }
+      },
     },
   });
 
@@ -196,21 +204,29 @@
         handler: function (driftrange) {
           if (driftrange != 0) {
             clearInterval(timerID);
-            updateTime(driftrange);            
+            updateTime(driftrange);
           } else {
             updateTime(driftrange);
             timerID = setInterval(updateTime, 1000);
           }
-        }
-      }
+        },
+      },
     },
-
 
     methods: {
       addClock: function () {
-        cityname = document.getElementById("timezone").value;
+        //sel = document.getElementById("timezone");
+        zone = document.getElementById("timezone").value;
+
+        n = zone.split("/");
+        n = n[n.length - 1].replace("_", " ");
+        cityname = n;
+
+        console.log(zone, cityname);
+
         this.citylist.push({
           id: this.citylist.length + 1,
+          zone: zone,
           name: cityname,
         });
         updateTime();
@@ -225,12 +241,14 @@
 
       resetslider: function () {
         this.driftrange = 0;
-      }
+      },
     },
   });
 
-  var week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-  var timerID = setInterval(updateTime, 1000);
+  const week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+  updateTime();
+  let timerID = setInterval(updateTime, 1000);
 
   function getTzlist() {
     let list = [];
@@ -241,17 +259,16 @@
 
   function updateTime(offset = 0) {
     for (i in clock.citylist) {
-      zone = clock.citylist[i].name;
+      zone = clock.citylist[i].zone;
 
       let cd = new Date();
 
       if (offset != 0) {
+        cd.setMinutes(0);
+        cd.setSeconds(0);
 
-          cd.setMinutes(0);
-          cd.setSeconds(0);
-
-          cd = cd.getTime();
-          cd = cd + offset * 1000 * 3600;
+        cd = cd.getTime();
+        cd = cd + offset * 1000 * 3600;
       }
 
       time = moment.tz(cd, zone).format("HH:mm:ss");
@@ -264,5 +281,4 @@
       clock.citylist[i].date = date;
     }
   }
-
 </script>
