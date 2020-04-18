@@ -21,7 +21,6 @@ p {
 #clockContainer {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr; 
-    /* grid-template-rows: 200px; */
 }
 
 
@@ -29,7 +28,8 @@ p {
     font-family: 'Share Tech Mono', monospace;
     color: #ffffff;
     text-align: center;
-    padding-top: 100px;
+    padding-top: 30px;
+    padding-bottom: 30px;
     /* position: absolute;
     left: 50%;
     /* top: 50%; */
@@ -44,6 +44,7 @@ p {
     }
 
     .date {
+        position: relative;
         letter-spacing: 0.1em;
         font-size: 24px;
     }
@@ -52,6 +53,21 @@ p {
         font-size: 24px;
         padding: 10px 0 0;
     }
+
+    .killclock {
+      position: absolute;
+      /* right: 0px; */
+      border: none;
+      fill: slategray;
+      background-color: transparent;
+      opacity: 0.2;
+      transition: 0.3s;
+    }
+    
+    .killclock:hover {
+      opacity: 1;
+    }
+
 /* Model */
 .modal-mask {
     position: fixed;
@@ -133,4 +149,55 @@ p {
 
 .settingName {
   width: 160px;
+}
+
+#slidebar {
+  margin-top: 50px;
+  grid-column-start: 1;
+  grid-column-end: 4;
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  position: absolute;
+  /* left: 10%;
+  width: 80%; Full-width */
+  left: 10%;
+  width: 80%;
+  bottom: 38px;
+  height: 25px; /* Specified height */
+  background: #333; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.3; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .3s; /* 0.2 seconds transition on hover */
+  transition: opacity .3s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 0.8; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 15px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: teal;
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 15px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: teal;
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slidervalue {
+  color: teal;
+  text-align: center;
 }

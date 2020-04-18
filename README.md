@@ -1,12 +1,16 @@
-# myClock v0.5
+# myClock v0.6
 A personal project to help productivity
 
 ## Action Items 
 * Change timezone names to city names (clock display)
 * New UI design for settings
-* Time drift bar!
 
 ## Change Logs
+
+### 0.5 -> 0.6
+* Added time drift bar
+* Added remove clock button at clock face
+* Redesigned settings
 
 ### 0.4 -> 0.5 
 * integrated moment.js and moment.timezone.js
