@@ -90,7 +90,7 @@ p {
     width: 300px;
     margin: 0px auto;
     padding: 20px 30px;
-    background-color: #fff;
+    background-color: white;
     border-radius: 2px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     transition: all 0.3s ease;
@@ -106,8 +106,16 @@ p {
     margin: 20px 0;
   }
   
+  .modal-footer {
+    width: 300px;
+    height: 32px;
+    position: relative;
+    /* background-color: teal; */
+  }
+
   .modal-default-button {
-    float: right;
+    position: absolute;
+    right: 0px;
   }
   
   /*
@@ -148,7 +156,12 @@ p {
 }
 
 .settingName {
-  width: 160px;
+  width: 197px;
+  padding: 3px;
+  margin-bottom: 5px;
+  /* border: none; */
+  border: 1px solid;
+  border-radius: 3px;
 }
 
 #slidebar {
@@ -200,4 +213,23 @@ p {
 .slidervalue {
   color: teal;
   text-align: center;
+}
+
+.settingclock {
+  width: 210px;
+  padding: 3px;
+  margin-bottom: 5px;
+  /* border: none; */
+  border: 1px solid;
+  border-radius: 3px;
+}
+
+.clockbuttons {
+  width: 36px;
+  height: 23px;
+}
+
+.settingsbody {
+  font-size: 12px;
+  margin-bottom: 12px;
 }

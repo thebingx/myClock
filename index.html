@@ -20,15 +20,13 @@
 
               <div class="modal-body">
                 <slot name="body">
-                  Here are some modals
                 </slot>
               </div>
 
               <div class="modal-footer">
                 <slot name="footer">
-                  When you are done, click OK.
                   <button class="modal-default-button" @click="$emit('close')">
-                    OK
+                    <img height="24px" src="img/ok.svg">
                   </button>
                 </slot>
               </div>
@@ -52,11 +50,12 @@
           @click="showModal = true"
           class="settings_button"
         >
-          <img src="settings.svg" />
+          <img src="img/settings.svg" />
         </button>
         <!-- use the modal component, pass in the prop -->
         <modal v-if="showModal" @close="saveSettings">
           <div slot="body">
+            <p class="settingsbody">v1.0.0 Copyright (C) 2019-2020, BingX.app</p>
             <clock-items
               v-for="post in citylist"
               v-bind:key="post.id"
@@ -64,7 +63,7 @@
             ></clock-items>
             <div>
               <span>
-                <label>Add Clock: </label>
+                <label class="settingsbody">Add Clock: </label>
                 <select class="settingName" id="timezone">
                   <option
                     v-for="tz in tzlist"
@@ -76,11 +75,13 @@
                 </select>
               </span>
               <span>
-                <button class="destroy" @click="addClock">+</button>
+                <button class="clockbuttons" @click="addClock">
+                  <img height="12px" src="img/new.svg">
+                </button>
               </span>
             </div>
           </div>
-          <h3 slot="header">Settings</h3>
+          <h3 slot="header">MyClocks Settings</h3>
         </modal>
       </div>
       <div id="slidebar">
@@ -101,7 +102,7 @@
 
 <script>
   // localStorage persistence
-  let STORAGE_KEY = "myclock-0.4";
+  let STORAGE_KEY = "myclock-1.0.0";
 
   let myclockStorage = {
     fetch: function () {
@@ -126,7 +127,7 @@
         <p class="date">
           {{ todo.date }}
           <button class="killclock" @click="killClock(todo)">
-            <img height="24px" src="remove.svg" />
+            <img height="24px" src="img/remove.svg" />
           </button>
         </p>
         <p class="time">{{ todo.time }}</p>
@@ -151,9 +152,9 @@
 
     template: `
       <div>
-        <span>{{ post.name }} </span>
-        <span><button class="destroy" @click="upClock(post)">Up</button></span>
-        <span><button class="destroy" @click="downClock(post)">Down</button></span>
+        <span><input class="settingclock" v-model="post.name"></span>
+        <span><button class="clockbuttons" @click="upClock(post)"><img height="12px" src="img/up.svg" /></button></span>
+        <span><button class="clockbuttons" @click="downClock(post)"><img height="12px" src="img/down.svg" /></button></span>
       </div>`,
 
     methods: {
@@ -187,7 +188,7 @@
     data: {
       time: "",
       date: "",
-      newClock: "",
+      // newClock: "",
       showModal: false,
       citylist: myclockStorage.fetch(),
       tzlist: getTzlist(),
